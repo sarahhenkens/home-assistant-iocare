@@ -2,11 +2,30 @@
 
 import logging
 
-from homeassistant.components.fan import FanEntity
+from homeassistant.components.fan import (
+    FanEntity,
+    SUPPORT_SET_SPEED,
+    SPEED_OFF,
+    SPEED_LOW,
+    SPEED_MEDIUM,
+    SPEED_HIGH,
+)
 
-from .const import DOMAIN
+from .const import DOMAIN, IOCARE_FAN_OFF, IOCARE_FAN_LOW, IOCARE_FAN_MEDIUM, IOCARE_FAN_HIGH
 
 _LOGGER = logging.getLogger(__name__)
+
+SUPPORTED_SPEEDS = [SPEED_LOW, SPEED_MEDIUM, SPEED_HIGH]
+SUPPORTED_FEATURES = SUPPORT_SET_SPEED
+
+IOCARE_FAN_SPEED_TO_HASS = {
+    IOCARE_FAN_OFF: SPEED_OFF,
+    IOCARE_FAN_LOW: SPEED_LOW,
+    IOCARE_FAN_MEDIUM: SPEED_MEDIUM,
+    IOCARE_FAN_HIGH: SPEED_HIGH,
+}
+
+HASS_FAN_SPEED_TO_IOCARE = {v: k for (k, v) in IOCARE_FAN_SPEED_TO_HASS.items()}
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -15,15 +34,12 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
 
 async def async_setup_entry(hass, config_entry, async_add_entities):
-    """Set up Abode switch devices."""
-    _LOGGER.info("Setting up config entry for the FAN platform")
-
+    """Set up Coway Air Purifier devices."""
     iocare = hass.data[DOMAIN]
 
     devices = []
 
     for device in iocare.devices():
-        _LOGGER.info("Creating a device instance with barcode: %s" % (device.device_id))
         devices.append(AirPurifier(device))
 
     async_add_entities(devices)
@@ -56,13 +72,38 @@ class AirPurifier(FanEntity):
         """Return true if switch is available."""
         return self._available
 
+    @property
+    def speed(self) -> str:
+        """Return the current speed."""
+        if not self.is_on:
+            return SPEED_OFF
+        return IOCARE_FAN_SPEED_TO_HASS.get(self._device.fan_speed)
+
+    @property
+    def speed_list(self) -> list:
+        """Get the list of available speeds."""
+        return SUPPORTED_SPEEDS
+
+    @property
+    def supported_features(self) -> int:
+        """Flag supported features."""
+        return SUPPORTED_FEATURES
+
     def turn_on(self, speed: str = None, **kwargs) -> None:
         """Turn the air purifier on."""
         self._device.set_power(True)
+        if speed is not None:
+            self.set_speed(speed)
 
     def turn_off(self, **kwargs) -> None:
         """Turn the air purifier off."""
         self._device.set_power(False)
+
+    def set_speed(self, speed: str) -> None:
+        """Set the fan_mode of the air purifier."""
+        if speed == SPEED_OFF:
+            return self.turn_off()
+        self._device.set_fan_speed(HASS_FAN_SPEED_TO_IOCARE.get(speed))
 
     def update(self):
         """Update automation state."""
