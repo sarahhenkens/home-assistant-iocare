@@ -4,6 +4,7 @@ import logging
 from homeassistant.components.air_quality import AirQualityEntity
 from .const import DOMAIN
 
+
 _LOGGER = logging.getLogger(__name__)
 
 
