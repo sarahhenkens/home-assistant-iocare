@@ -1,4 +1,5 @@
 """Support for Coway IoCare"""
+
 import logging
 import voluptuous as vol
 from iocare import IOCareApi
@@ -7,17 +8,18 @@ import homeassistant.helpers.config_validation as cv
 from homeassistant import config_entries
 from homeassistant.const import EVENT_HOMEASSISTANT_STOP
 from homeassistant.exceptions import ConfigEntryNotReady
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-
-
+from homeassistant.const import (
+    CONF_PASSWORD,
+    CONF_USERNAME
+)
 from .const import DOMAIN
+
 
 _LOGGER = logging.getLogger(__name__)
 
 
 def setup(hass, config):
     """Setup of the component"""
-
     return True
 
 

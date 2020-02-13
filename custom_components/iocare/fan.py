@@ -11,9 +11,13 @@ from homeassistant.components.fan import (
     SPEED_HIGH,
 )
 
-from .const import DOMAIN, IOCARE_FAN_OFF, IOCARE_FAN_LOW, IOCARE_FAN_MEDIUM, IOCARE_FAN_HIGH
-
-_LOGGER = logging.getLogger(__name__)
+from .const import (
+    DOMAIN,
+    IOCARE_FAN_OFF,
+    IOCARE_FAN_LOW,
+    IOCARE_FAN_MEDIUM,
+    IOCARE_FAN_HIGH
+)
 
 SUPPORTED_SPEEDS = [SPEED_LOW, SPEED_MEDIUM, SPEED_HIGH]
 SUPPORTED_FEATURES = SUPPORT_SET_SPEED
@@ -26,6 +30,9 @@ IOCARE_FAN_SPEED_TO_HASS = {
 }
 
 HASS_FAN_SPEED_TO_IOCARE = {v: k for (k, v) in IOCARE_FAN_SPEED_TO_HASS.items()}
+
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_platform(hass, config, async_add_entities, discovery_info=None):
@@ -109,4 +116,3 @@ class AirPurifier(FanEntity):
         """Update automation state."""
         _LOGGER.info("Refreshing device state")
         self._device.refresh()
-
