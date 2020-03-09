@@ -46,27 +46,27 @@ class AirMonitor(AirQualityEntity):
     @property
     def air_quality_index(self):
         """Return the Air Quality Index (AQI)."""
-        return self._device.quality["air_quality_index"]
+        return str(round(self._device.quality["air_quality_index"], 2))
 
     @property
     def particulate_matter_2_5(self):
         """Return the particulate matter 2.5 level."""
-        return self._device.quality["particulate_matter_2_5"]
+        return str(round(self._device.quality["particulate_matter_2_5"], 2))
 
     @property
     def particulate_matter_10(self):
         """Return the particulate matter 10 level."""
-        return self._device.quality["particulate_matter_10"]
+        return str(round(self._device.quality["particulate_matter_10"], 2))
 
     @property
     def carbon_dioxide(self):
         """Return the CO2 (carbon dioxide) level."""
-        return self._device.quality["carbon_dioxide"]
+        return str(round(self._device.quality["carbon_dioxide"], 2))
 
     @property
     def volatile_organic_compounds(self):
         """Return the VOC (Volatile Organic Compounds) level."""
-        return self._device.quality["volatile_organic_compounds"]
+        return str(round(self._device.quality["volatile_organic_compounds"], 2))
 
     @property
     def state(self):
