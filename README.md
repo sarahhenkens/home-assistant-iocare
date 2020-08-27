@@ -19,3 +19,4 @@ and place inside your Home Assistant Core installation's `custom_components` dir
 ## Setup
 1. Install this integration.
 2. Use Config Flow to configure the integration for your IoCare credentials.
+    * Initiate Config Flow by navigating to Configuration > Integrations > click the "+" button > find IoCare (restart Home Assistant and / or clear browser cache if you can't find it)
