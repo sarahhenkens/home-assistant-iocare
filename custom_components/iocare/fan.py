@@ -1,6 +1,9 @@
 """Support for Coway Air Purifiers."""
 
 import logging
+import voluptuous as vol
+from homeassistant.helpers import config_validation as cv, entity_platform, service
+from homeassistant.const import ATTR_ENTITY_ID
 
 from homeassistant.components.fan import (
     FanEntity,
@@ -11,12 +14,17 @@ from homeassistant.components.fan import (
     SPEED_HIGH,
 )
 
+
 """Attributes"""
 
 ATTR_NIGHT_MODE = "night_mode"
 ATTR_AUTO_MODE = "auto_mode"
 ATTR_PRE_FILTER_PERCENT = "pre_filter_percent"
 ATTR_MAX2_FILTER_PERCENT = "max2_filter_percent"
+
+SERVICE_SET_AUTO_MODE = "set_auto_mode_on"
+SERVICE_SET_NIGHT_MODE = "set_night_mode_on"
+
 
 from .const import (
     DOMAIN,
@@ -51,6 +59,8 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     """Set up Coway Air Purifier devices."""
     iocare = hass.data[DOMAIN]
 
+    platform = entity_platform.current_platform.get()
+
     devices = []
 
     for device in iocare.devices():
@@ -58,6 +68,17 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     async_add_entities(devices)
 
+    platform.async_register_entity_service(
+        SERVICE_SET_AUTO_MODE,
+        {vol.Required(ATTR_ENTITY_ID): cv.entity_id},
+        "set_auto_mode_on",
+    )
+
+    platform.async_register_entity_service(
+        SERVICE_SET_NIGHT_MODE,
+        {vol.Required(ATTR_ENTITY_ID): cv.entity_id},
+        "set_night_mode_on",
+    )
 
 class AirPurifier(FanEntity):
     """Representation of a Coway Airmega air purifier."""
@@ -148,6 +169,14 @@ class AirPurifier(FanEntity):
         if speed == SPEED_OFF:
             return self.turn_off()
         self._device.set_fan_speed(HASS_FAN_SPEED_TO_IOCARE.get(speed))
+
+    def set_auto_mode_on(self) -> None:
+        """Sets Auto Mode to ON"""
+        self._device.set_auto_mode()
+
+    def set_night_mode_on(self) -> None:
+        """Sets Night Mode to ON"""
+        self._device.set_night_mode()
 
     def update(self):
         """Update automation state."""
