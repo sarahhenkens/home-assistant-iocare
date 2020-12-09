@@ -1,0 +1,13 @@
+set_night_mode_on:
+  description: Set the purifier to night mode.
+  fields:
+    entity_id:
+      description: Name of the entity to set to night mode
+      example: "fan.office_purifier"
+
+set_auto_mode_on:
+  description: Set the purifier to auto mode.
+  fields:
+    entity_id:
+      description: Name of the entity to set to auto mode
+      example: "fan.office_purifier"
