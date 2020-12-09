@@ -11,6 +11,13 @@ from homeassistant.components.fan import (
     SPEED_HIGH,
 )
 
+"""Attributes"""
+
+ATTR_NIGHT_MODE = "night_mode"
+ATTR_AUTO_MODE = "auto_mode"
+ATTR_PRE_FILTER_PERCENT = "pre_filter_percent"
+ATTR_MAX2_FILTER_PERCENT = "max2_filter_percent"
+
 from .const import (
     DOMAIN,
     IOCARE_FAN_OFF,
@@ -75,6 +82,26 @@ class AirPurifier(FanEntity):
         return self._device.is_on
 
     @property
+    def auto_mode(self):
+        """Return true if purifier speed is set to auto mode and false if off."""
+        return self._device.is_auto
+
+    @property
+    def night_mode(self):
+        """Return true if purifier speed is set to night mode and false if off."""
+        return self._device.is_night
+
+    @property
+    def pre_filter_percent(self) -> int:
+        """Return Pre-Filter Percentage"""
+        return self._device.filters[0]["life_level_pct"]
+
+    @property
+    def max2_filter_percent(self) -> int:
+        """Return MAX2 Filter Percentage"""
+        return self._device.filters[1]["life_level_pct"]
+
+    @property
     def available(self):
         """Return true if switch is available."""
         return self._available
@@ -95,6 +122,16 @@ class AirPurifier(FanEntity):
     def supported_features(self) -> int:
         """Flag supported features."""
         return SUPPORTED_FEATURES
+
+    @property
+    def device_state_attributes(self) -> dict:
+        """Return optional state attributes."""
+        return {
+            ATTR_NIGHT_MODE: self.night_mode,
+            ATTR_AUTO_MODE: self.auto_mode,
+            ATTR_PRE_FILTER_PERCENT: self.pre_filter_percent,
+            ATTR_MAX2_FILTER_PERCENT: self.max2_filter_percent,
+        }
 
     def turn_on(self, speed: str = None, **kwargs) -> None:
         """Turn the air purifier on."""
