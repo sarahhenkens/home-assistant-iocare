@@ -46,7 +46,7 @@ class AirMonitor(AirQualityEntity):
     @property
     def air_quality_index(self):
         """Return the Air Quality Index (AQI)."""
-        return round(int(float(self._device.quality["air_quality_index"])), 1)
+        return round(float(self._device.quality["air_quality_index"]), 1)
 
     @property
     def particulate_matter_2_5(self):
