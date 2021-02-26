@@ -4,14 +4,10 @@ import logging
 import voluptuous as vol
 from homeassistant.helpers import config_validation as cv, entity_platform, service
 from homeassistant.const import ATTR_ENTITY_ID
-
+from homeassistant.util.percentage import ordered_list_item_to_percentage, percentage_to_ordered_list_item
 from homeassistant.components.fan import (
     FanEntity,
     SUPPORT_SET_SPEED,
-    SPEED_OFF,
-    SPEED_LOW,
-    SPEED_MEDIUM,
-    SPEED_HIGH,
 )
 
 
@@ -34,14 +30,15 @@ from .const import (
     IOCARE_FAN_HIGH
 )
 
-SUPPORTED_SPEEDS = [SPEED_LOW, SPEED_MEDIUM, SPEED_HIGH]
+SPEED_LIST = ['Low', 'Medium', 'High']
 SUPPORTED_FEATURES = SUPPORT_SET_SPEED
 
+"""Pair IOCARE Fan Speed Constants to Home Assistant Percentages"""
 IOCARE_FAN_SPEED_TO_HASS = {
-    IOCARE_FAN_OFF: SPEED_OFF,
-    IOCARE_FAN_LOW: SPEED_LOW,
-    IOCARE_FAN_MEDIUM: SPEED_MEDIUM,
-    IOCARE_FAN_HIGH: SPEED_HIGH,
+    IOCARE_FAN_OFF: 0,
+    IOCARE_FAN_LOW: ordered_list_item_to_percentage(SPEED_LIST, 'Low'),
+    IOCARE_FAN_MEDIUM: ordered_list_item_to_percentage(SPEED_LIST, 'Medium'),
+    IOCARE_FAN_HIGH: ordered_list_item_to_percentage(SPEED_LIST, 'High')
 }
 
 HASS_FAN_SPEED_TO_IOCARE = {v: k for (k, v) in IOCARE_FAN_SPEED_TO_HASS.items()}
@@ -128,16 +125,16 @@ class AirPurifier(FanEntity):
         return self._available
 
     @property
-    def speed(self) -> str:
-        """Return the current speed."""
+    def percentage(self) -> int:
+        """Return the current speed as percentage."""
         if not self.is_on:
-            return SPEED_OFF
+            return 0
         return IOCARE_FAN_SPEED_TO_HASS.get(self._device.fan_speed)
 
     @property
-    def speed_list(self) -> list:
-        """Get the list of available speeds."""
-        return SUPPORTED_SPEEDS
+    def speed_count(self) -> int:
+        """Get the number of available speeds."""
+        return len(SPEED_LIST)
 
     @property
     def supported_features(self) -> int:
@@ -154,21 +151,21 @@ class AirPurifier(FanEntity):
             ATTR_MAX2_FILTER_PERCENT: self.max2_filter_percent,
         }
 
-    def turn_on(self, speed: str = None, **kwargs) -> None:
+    def turn_on(self, percentage: int = None, **kwargs) -> None:
         """Turn the air purifier on."""
         self._device.set_power(True)
-        if speed is not None:
-            self.set_speed(speed)
+        if percentage is not None:
+            self.set_percentage(percentage)
 
     def turn_off(self, **kwargs) -> None:
         """Turn the air purifier off."""
         self._device.set_power(False)
 
-    def set_speed(self, speed: str) -> None:
-        """Set the fan_mode of the air purifier."""
-        if speed == SPEED_OFF:
+    def set_percentage(self, percentage: int) -> None:
+        """Set the fan speed to desired percentage."""
+        if percentage == 0:
             return self.turn_off()
-        self._device.set_fan_speed(HASS_FAN_SPEED_TO_IOCARE.get(speed))
+        self._device.set_fan_speed(HASS_FAN_SPEED_TO_IOCARE.get(percentage))
 
     def set_auto_mode_on(self) -> None:
         """Sets Auto Mode to ON"""
