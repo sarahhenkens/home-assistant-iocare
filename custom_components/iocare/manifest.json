@@ -1,6 +1,7 @@
 {
   "domain": "iocare",
   "name": "IoCare",
+  "version": "2021.2.0",
   "config_flow": true,
   "requirements": ["python-iocare==0.1.5"],
   "dependencies": [],
