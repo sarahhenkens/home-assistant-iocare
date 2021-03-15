@@ -36,8 +36,13 @@ class IOCareSwitch(SwitchEntity):
 
     @property
     def name(self):
-        """Return the name of the purifier if any."""
-        return self._device.name        
+        """Return the name of the purifier + Light if any."""
+        return self._device.name + " Light"
+
+    @property
+    def icon(self):
+        """Set purifier switch icon to lightbulb"""
+        return 'mdi:lightbulb'
 
     @property
     def is_on(self):
