@@ -8,6 +8,7 @@ from homeassistant.util.percentage import ordered_list_item_to_percentage, perce
 from homeassistant.components.fan import (
     FanEntity,
     SUPPORT_SET_SPEED,
+    SUPPORT_PRESET_MODE,
 )
 
 
@@ -21,6 +22,9 @@ ATTR_MAX2_FILTER_PERCENT = "max2_filter_percent"
 SERVICE_SET_AUTO_MODE = "set_auto_mode_on"
 SERVICE_SET_NIGHT_MODE = "set_night_mode_on"
 
+PRESET_MODE_AUTO = "auto"
+PRESET_MODE_NIGHT = "night"
+
 
 from .const import (
     DOMAIN,
@@ -30,14 +34,15 @@ from .const import (
     IOCARE_FAN_HIGH
 )
 
-SPEED_LIST = ['Low', 'Medium', 'High']
-SUPPORTED_FEATURES = SUPPORT_SET_SPEED
+ORDERED_NAMED_FAN_SPEEDS = [IOCARE_FAN_LOW, IOCARE_FAN_MEDIUM, IOCARE_FAN_HIGH]
+PRESET_MODES = [PRESET_MODE_AUTO, PRESET_MODE_NIGHT]
+
 
 IOCARE_FAN_SPEED_TO_HASS = {
     IOCARE_FAN_OFF: 0,
-    IOCARE_FAN_LOW: ordered_list_item_to_percentage(SPEED_LIST, 'Low'),
-    IOCARE_FAN_MEDIUM: ordered_list_item_to_percentage(SPEED_LIST, 'Medium'),
-    IOCARE_FAN_HIGH: ordered_list_item_to_percentage(SPEED_LIST, 'High')
+    IOCARE_FAN_LOW: ordered_list_item_to_percentage(ORDERED_NAMED_FAN_SPEEDS, IOCARE_FAN_LOW),
+    IOCARE_FAN_MEDIUM: ordered_list_item_to_percentage(ORDERED_NAMED_FAN_SPEEDS, IOCARE_FAN_MEDIUM),
+    IOCARE_FAN_HIGH: ordered_list_item_to_percentage(ORDERED_NAMED_FAN_SPEEDS, IOCARE_FAN_HIGH)
 }
 
 HASS_FAN_SPEED_TO_IOCARE = {v: k for (k, v) in IOCARE_FAN_SPEED_TO_HASS.items()}
@@ -99,6 +104,22 @@ class AirPurifier(FanEntity):
         return self._device.is_on
 
     @property
+    def preset_modes(self):
+        """Return the available preset modes"""
+        return PRESET_MODES
+
+    @property
+    def preset_mode(self):
+        """"Return the current preset mode"""
+        if self._device.is_auto_eco:
+            return PRESET_MODE_AUTO
+        if self._device.is_auto:
+            return PRESET_MODE_AUTO
+        if self._device.is_night:
+            return PRESET_MODE_NIGHT
+        return None
+
+    @property
     def auto_mode(self):
         """Return true if purifier speed is set to auto mode and false if off."""
         if self._device.is_auto_eco:
@@ -128,19 +149,19 @@ class AirPurifier(FanEntity):
     @property
     def percentage(self) -> int:
         """Return the current speed."""
-        if not self.is_on:
+        if not self._device.is_on:
             return 0
         return IOCARE_FAN_SPEED_TO_HASS.get(self._device.fan_speed)
 
     @property
     def speed_count(self) -> int:
         """Get the list of available speeds."""
-        return len(SPEED_LIST)
+        return len(ORDERED_NAMED_FAN_SPEEDS)
 
     @property
     def supported_features(self) -> int:
         """Flag supported features."""
-        return SUPPORTED_FEATURES
+        return SUPPORT_SET_SPEED | SUPPORT_PRESET_MODE
 
     @property
     def device_state_attributes(self) -> dict:
@@ -166,7 +187,23 @@ class AirPurifier(FanEntity):
         """Set the fan_mode of the air purifier."""
         if percentage == 0:
             return self.turn_off()
+        if not self.is_on:
+            self.turn_on()
+            self._device.set_fan_speed(HASS_FAN_SPEED_TO_IOCARE.get(percentage))
         self._device.set_fan_speed(HASS_FAN_SPEED_TO_IOCARE.get(percentage))
+
+    def set_preset_mode(self, preset_mode: str) -> None:
+        """Set a preset mode on the fan."""
+        if preset_mode == PRESET_MODE_AUTO:
+            if not self._device.is_on:
+                self.turn_on()
+                self._device.set_auto_mode()
+            self._device.set_auto_mode()
+        if preset_mode == PRESET_MODE_NIGHT:
+            if not self._device.is_on:
+                self.turn_on()
+                self._device.set_night_mode()
+            self._device.set_night_mode()
 
     def set_auto_mode_on(self) -> None:
         """Sets Auto Mode to ON"""
