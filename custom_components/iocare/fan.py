@@ -33,7 +33,6 @@ from .const import (
 SPEED_LIST = ['Low', 'Medium', 'High']
 SUPPORTED_FEATURES = SUPPORT_SET_SPEED
 
-"""Pair IOCARE Fan Speed Constants to Home Assistant Percentages"""
 IOCARE_FAN_SPEED_TO_HASS = {
     IOCARE_FAN_OFF: 0,
     IOCARE_FAN_LOW: ordered_list_item_to_percentage(SPEED_LIST, 'Low'),
@@ -102,6 +101,8 @@ class AirPurifier(FanEntity):
     @property
     def auto_mode(self):
         """Return true if purifier speed is set to auto mode and false if off."""
+        if self._device.is_auto_eco:
+            return str(self._device.is_auto_eco).lower() + "(eco)"
         return self._device.is_auto
 
     @property
@@ -126,14 +127,14 @@ class AirPurifier(FanEntity):
 
     @property
     def percentage(self) -> int:
-        """Return the current speed as percentage."""
+        """Return the current speed."""
         if not self.is_on:
             return 0
         return IOCARE_FAN_SPEED_TO_HASS.get(self._device.fan_speed)
 
     @property
     def speed_count(self) -> int:
-        """Get the number of available speeds."""
+        """Get the list of available speeds."""
         return len(SPEED_LIST)
 
     @property
@@ -162,7 +163,7 @@ class AirPurifier(FanEntity):
         self._device.set_power(False)
 
     def set_percentage(self, percentage: int) -> None:
-        """Set the fan speed to desired percentage."""
+        """Set the fan_mode of the air purifier."""
         if percentage == 0:
             return self.turn_off()
         self._device.set_fan_speed(HASS_FAN_SPEED_TO_IOCARE.get(percentage))
