@@ -1,8 +1,9 @@
 {
   "domain": "iocare",
-  "name": "IoCare",
+  "name": "IOCare",
+  "version": "2021.3.0",
   "config_flow": true,
-  "requirements": ["python-iocare==0.1.5"],
+  "requirements": ["git+https://github.com/RobertD502/python-iocare@master#python-iocare==0.1.6"],
   "dependencies": [],
   "codeowners": ["@sarahhenkens"]
 }
