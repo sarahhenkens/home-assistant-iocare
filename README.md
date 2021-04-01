@@ -4,9 +4,9 @@
 Custom component for Home Assistant Core for monitoring and controlling
 Coway / Airmega air purifiers.
 
-**Breaking Change 2021.4.0**
+**Breaking Change 0.0.1**
 
-The recent update of home-assistant-iocare to `2021.4.0` uses a new domain. If you previously installed any version prior to `2021.4.0`, you will need to delete the integration from the integrations page in Home Assistant. Due to the new domain name, previous integrations will fail to work.
+The recent update of home-assistant-iocare to `0.0.1` uses a new domain. If you previously installed any version prior to `0.0.1`, you will need to delete the integration from the integrations page in Home Assistant. Due to the new domain name, previous integrations will fail to work.
 1. Delete your current IOCare Integration from the Home Assistant Integrations page
    1. If you updated prior to deleting the integration, delete the integration, restart Home Assistant, and proceed to step 4
 2. Update home-assistant-iocare via HACS or manually
