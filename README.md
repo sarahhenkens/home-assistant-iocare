@@ -1,4 +1,6 @@
 # Coway IoCare
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs) ![LGTM Grade](https://img.shields.io/lgtm/grade/python/github/sarahhenkens/home-assistant-iocare) ![GitHub manifest version (path)](https://img.shields.io/github/manifest-json/v/sarahhenkens/home-assistant-iocare?filename=custom_components%2Fcoway%2Fmanifest.json) ![GitHub all releases](https://img.shields.io/github/downloads/sarahhenkens/home-assistant-iocare/total?color=green)
+
 Custom component for Home Assistant Core for monitoring and controlling
 Coway / Airmega air purifiers.
 
