@@ -1,9 +1,8 @@
 """Config flow of our component"""
-import asyncio
 import logging
 import voluptuous as vol
 from iocare.iocareapi import IOCareApi
-from homeassistant import config_entries, exceptions
+from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.const import (
     CONF_PASSWORD,
@@ -67,7 +66,7 @@ class IoCareConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             CONF_PASSWORD: self._password,
         }
 
-        return self.async_create_entry(title="Coway IOCare Config Entry", data=config_data)
+        return self.async_create_entry(title=self._username, data=config_data)
 
     @callback
     def _show_form(self, errors=None):

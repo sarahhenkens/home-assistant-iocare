@@ -1,6 +1,6 @@
 """Support for IOCare switches."""
 import logging
-from homeassistant.components.switch import ENTITY_ID_FORMAT, SwitchEntity
+from homeassistant.components.switch import SwitchEntity
 from .const import DOMAIN
 _LOGGER = logging.getLogger(__name__)
 
@@ -19,7 +19,7 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
     for device in iocare.devices():
         devices.append(IOCareSwitch(device))
 
-    async_add_entities(devices)    
+    async_add_entities(devices)
 
 
 class IOCareSwitch(SwitchEntity):

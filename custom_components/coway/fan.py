@@ -2,9 +2,9 @@
 
 import logging
 import voluptuous as vol
-from homeassistant.helpers import config_validation as cv, entity_platform, service
+from homeassistant.helpers import config_validation as cv, entity_platform
 from homeassistant.const import ATTR_ENTITY_ID
-from homeassistant.util.percentage import ordered_list_item_to_percentage, percentage_to_ordered_list_item
+from homeassistant.util.percentage import ordered_list_item_to_percentage
 from homeassistant.components.fan import (
     FanEntity,
     SUPPORT_SET_SPEED,

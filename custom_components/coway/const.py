@@ -1,6 +1,6 @@
 """My platform constants"""
 
-DOMAIN = "iocare"
+DOMAIN = "coway"
 
 IOCARE_FAN_OFF = "0"
 IOCARE_FAN_LOW = "1"
