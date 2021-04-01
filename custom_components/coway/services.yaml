@@ -7,7 +7,7 @@ set_night_mode_on:
       example: "fan.office_purifier"
       selector:
         entity:
-          integration: iocare
+          integration: coway
           domain: fan
 
 set_auto_mode_on:
@@ -19,5 +19,5 @@ set_auto_mode_on:
       example: "fan.office_purifier"
       selector:
         entity:
-          integration: iocare
+          integration: coway
           domain: fan
