@@ -18,7 +18,7 @@ class IoCareConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     CONNECTION_CLASS = config_entries.CONN_CLASS_CLOUD_POLL
 
     def __init__(self):
-        """Initialize IOCare configuration flow"""
+        """Initialize IoCare configuration flow"""
         self.schema = vol.Schema({
             vol.Required(CONF_USERNAME): str,
             vol.Required(CONF_PASSWORD): str
@@ -51,7 +51,7 @@ class IoCareConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             await self.hass.async_add_executor_job(client.check_access_token)
 
         except Exception:
-            _LOGGER.error("Unable to connect to IOCare: Failed to Log In")
+            _LOGGER.error("Unable to connect to IoCare: Failed to Log In")
             errors = {"base": "auth_error"}
 
         if errors:

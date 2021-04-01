@@ -1,20 +1,20 @@
 {
   "config": {
-    "title": "Coway IOCare",
+    "title": "Coway IoCare",
     "step": {
       "user": {
-        "title": "Fill in your Coway IOCare credentials",
+        "title": "Fill in your Coway IoCare credentials",
         "data": {
-          "username": "Coway Username",
-          "password": "Coway Password"
+          "username": "IoCare Username",
+          "password": "IoCare Password"
         }
       }
     },
     "error": {
-      "auth_error": "IOCare authentication failed. Are your credentials correct?"
+      "auth_error": "IoCare authentication failed. Are your credentials correct?"
     },
     "abort": {
-      "already_configured": "IOCare is already configured"
+      "already_configured": "IoCare is already configured"
     }
   }
 }

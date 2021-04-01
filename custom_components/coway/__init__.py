@@ -1,4 +1,4 @@
-"""Support for Coway IOCare"""
+"""Support for Coway IoCare"""
 import asyncio
 import logging
 import voluptuous as vol
@@ -24,7 +24,7 @@ def setup(hass, config):
 
 
 async def async_setup_entry(hass, config_entry):
-    """Set up IOCare integration from a config entry."""
+    """Set up IoCare integration from a config entry."""
     username = config_entry.data.get(CONF_USERNAME)
     password = config_entry.data.get(CONF_PASSWORD)
 
