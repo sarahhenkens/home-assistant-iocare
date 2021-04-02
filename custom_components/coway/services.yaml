@@ -1,9 +1,9 @@
 set_night_mode_on:
-  name: Turn On Night Mode
   description: Set the purifier to night mode.
   fields:
     entity_id:
       description: Name of the entity to set to night mode
+      required: true
       example: "fan.office_purifier"
       selector:
         entity:
@@ -16,8 +16,35 @@ set_auto_mode_on:
   fields:
     entity_id:
       description: Name of the entity to set to auto mode
+      required: true
       example: "fan.office_purifier"
       selector:
         entity:
           integration: coway
           domain: fan
+
+set_timer:
+  name: Set A Timer
+  description: Set a timer
+  fields:
+    entity_id:
+      description: Name of the entity to set on a timer
+      required: true
+      example: "fan.office_purifier"
+      selector:
+        entity:
+          integration: coway
+          domain: fan
+    timer:
+      description: The value in hours to set timer to. 1, 2, 4, and 8 hours available. 0 to disable timer.
+      required: true
+      default: 0
+      example: 2
+      selector:
+        select:
+          options:
+            - 0
+            - 1
+            - 2
+            - 4
+            - 8

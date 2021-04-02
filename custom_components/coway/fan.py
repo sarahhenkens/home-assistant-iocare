@@ -18,20 +18,41 @@ ATTR_NIGHT_MODE = "night_mode"
 ATTR_AUTO_MODE = "auto_mode"
 ATTR_PRE_FILTER_PERCENT = "pre_filter_percent"
 ATTR_MAX2_FILTER_PERCENT = "max2_filter_percent"
+ATTR_TIMER = "timer"
+ATTR_TIMER_REMAINING = "timer_remaining"
 
 SERVICE_SET_AUTO_MODE = "set_auto_mode_on"
 SERVICE_SET_NIGHT_MODE = "set_night_mode_on"
+SERVICE_SET_TIMER = "set_timer"
 
 PRESET_MODE_AUTO = "auto"
 PRESET_MODE_NIGHT = "night"
 
+
+SET_AUTO_MODE_SCHEMA = {
+    vol.Required(ATTR_ENTITY_ID): cv.entity_id,
+}
+
+SET_NIGHT_MODE_SCHEMA = {
+    vol.Required(ATTR_ENTITY_ID): cv.entity_id,
+}
+
+SET_TIMER_SCHEMA = {
+    vol.Required(ATTR_ENTITY_ID): cv.entity_id,
+    vol.Required(ATTR_TIMER): cv.positive_int,
+}
 
 from .const import (
     DOMAIN,
     IOCARE_FAN_OFF,
     IOCARE_FAN_LOW,
     IOCARE_FAN_MEDIUM,
-    IOCARE_FAN_HIGH
+    IOCARE_FAN_HIGH,
+    IOCARE_TIMER_OFF,
+    IOCARE_TIMER_1H,
+    IOCARE_TIMER_2H,
+    IOCARE_TIMER_4H,
+    IOCARE_TIMER_8H
 )
 
 ORDERED_NAMED_FAN_SPEEDS = [IOCARE_FAN_LOW, IOCARE_FAN_MEDIUM, IOCARE_FAN_HIGH]
@@ -71,14 +92,20 @@ async def async_setup_entry(hass, config_entry, async_add_entities):
 
     platform.async_register_entity_service(
         SERVICE_SET_AUTO_MODE,
-        {vol.Required(ATTR_ENTITY_ID): cv.entity_id},
+        SET_AUTO_MODE_SCHEMA,
         "set_auto_mode_on",
     )
 
     platform.async_register_entity_service(
         SERVICE_SET_NIGHT_MODE,
-        {vol.Required(ATTR_ENTITY_ID): cv.entity_id},
+        SET_NIGHT_MODE_SCHEMA,
         "set_night_mode_on",
+    )
+
+    platform.async_register_entity_service(
+        SERVICE_SET_TIMER,
+        SET_TIMER_SCHEMA,
+        "set_timer",
     )
 
 class AirPurifier(FanEntity):
@@ -132,6 +159,20 @@ class AirPurifier(FanEntity):
         return self._device.is_night
 
     @property
+    def timer(self):
+        """Return for how many hours timer is set to"""
+        if (float(self._device.timer) / 60) == 0:
+            return "off"
+        return (float(self._device.timer) / 60)
+
+    @property
+    def timer_remaining(self):
+        """Return hours left if a timer is on and 0 if no time left"""
+        if round((float(self._device.timer_remaining) / 60), 2) == 0:
+            return 0
+        return round((float(self._device.timer_remaining) / 60), 2)
+
+    @property
     def pre_filter_percent(self) -> int:
         """Return Pre-Filter Percentage"""
         return self._device.filters[0]["life_level_pct"]
@@ -171,6 +212,8 @@ class AirPurifier(FanEntity):
             ATTR_AUTO_MODE: self.auto_mode,
             ATTR_PRE_FILTER_PERCENT: self.pre_filter_percent,
             ATTR_MAX2_FILTER_PERCENT: self.max2_filter_percent,
+            ATTR_TIMER: self.timer,
+            ATTR_TIMER_REMAINING: self.timer_remaining,
         }
 
     def turn_on(self, percentage: int = None, **kwargs) -> None:
@@ -212,6 +255,26 @@ class AirPurifier(FanEntity):
     def set_night_mode_on(self) -> None:
         """Sets Night Mode to ON"""
         self._device.set_night_mode()
+
+    def set_timer(self, timer) -> None:
+        """Set timer."""
+        while timer not in [0, 1, 2, 4, 8]:
+            return _LOGGER.error("Only 0, 1, 2, 4, and 8 are accepted times")
+        if timer == 0:
+            self._device.set_timer(IOCARE_TIMER_OFF)
+            self.timer_remaining
+        if timer == 1:
+            self._device.set_timer(IOCARE_TIMER_1H)
+            self.timer_remaining
+        if timer == 2:
+            self._device.set_timer(IOCARE_TIMER_2H)
+            self.timer_remaining
+        if timer == 4:
+            self._device.set_timer(IOCARE_TIMER_4H)
+            self.timer_remaining
+        if timer == 8:
+            self._device.set_timer(IOCARE_TIMER_8H)
+            self.timer_remaining
 
     def update(self):
         """Update automation state."""
