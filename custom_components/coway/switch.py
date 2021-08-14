@@ -30,6 +30,16 @@ class IOCareSwitch(SwitchEntity):
         self._available = True
 
     @property
+    def device_info(self):
+        """Return device registry information for this entity."""
+        return {
+            "identifiers": {(DOMAIN, self._device.device_id)},
+            "name": self._device.name,
+            "manufacturer": "Coway",
+            "model": self._device.product_name_full,
+        }
+
+    @property
     def unique_id(self):
         """Return the ID of this purifier."""
         return self._device.device_id
