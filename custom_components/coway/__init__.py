@@ -1,4 +1,4 @@
-"""Support for Coway IoCare"""
+"""Support for Coway IOCare"""
 import asyncio
 import logging
 import voluptuous as vol
@@ -24,7 +24,7 @@ def setup(hass, config):
 
 
 async def async_setup_entry(hass, config_entry):
-    """Set up IoCare integration from a config entry."""
+    """Set up IOCare integration from a config entry."""
     username = config_entry.data.get(CONF_USERNAME)
     password = config_entry.data.get(CONF_PASSWORD)
 
@@ -38,7 +38,7 @@ async def async_setup_entry(hass, config_entry):
         hass.config_entries.async_forward_entry_setup(config_entry, "fan")
     )
     hass.async_add_job(
-        hass.config_entries.async_forward_entry_setup(config_entry, "air_quality")
+        hass.config_entries.async_forward_entry_setup(config_entry, "sensor")
     )
     hass.async_add_job(
         hass.config_entries.async_forward_entry_setup(config_entry, "switch")
