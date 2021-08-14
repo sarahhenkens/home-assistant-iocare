@@ -25,8 +25,8 @@ SERVICE_SET_AUTO_MODE = "set_auto_mode_on"
 SERVICE_SET_NIGHT_MODE = "set_night_mode_on"
 SERVICE_SET_TIMER = "set_timer"
 
-PRESET_MODE_AUTO = "auto"
-PRESET_MODE_NIGHT = "night"
+PRESET_MODE_AUTO = "Auto"
+PRESET_MODE_NIGHT = "Night"
 
 
 SET_AUTO_MODE_SCHEMA = {
@@ -114,6 +114,16 @@ class AirPurifier(FanEntity):
     def __init__(self, device):
         self._device = device
         self._available = True
+
+    @property
+    def device_info(self):
+        """Return device registry information for this entity."""
+        return {
+            "identifiers": {(DOMAIN, self._device.device_id)},
+            "name": self._device.name,
+            "manufacturer": "Coway",
+            "model": self._device.product_name_full,
+        }
 
     @property
     def unique_id(self):
