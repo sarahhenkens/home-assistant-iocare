@@ -2,10 +2,11 @@
 
 import logging
 from homeassistant.helpers import entity_platform
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorEntity, STATE_CLASS_MEASUREMENT
 from .const import DOMAIN
 from homeassistant.const import (
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+    CONCENTRATION_PARTS_PER_MILLION,
     DEVICE_CLASS_CO2,
 )
 _LOGGER = logging.getLogger(__name__)
@@ -69,9 +70,17 @@ class AirQualityIndex(SensorEntity):
         return self._device.name + '_aqi'
 
     @property
-    def state(self):
+    def state(self) -> float:
         """Return AQI Measurement"""
         return round(float(self._device.quality["air_quality_index"]), 1)
+
+    @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
+
+    @property
+    def unit_of_measurement(self):
+        return "AQI"
 
     @property
     def icon(self):
@@ -118,6 +127,10 @@ class ParticulateMatter25(SensorEntity):
     def state(self):
         """Return the particulate matter 2.5 level."""
         return self._device.quality["particulate_matter_2_5"]
+
+    @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
 
     @property
     def unit_of_measurement(self):
@@ -170,6 +183,10 @@ class ParticulateMatter10(SensorEntity):
         return self._device.quality["particulate_matter_10"]
 
     @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
+
+    @property
     def unit_of_measurement(self):
         return CONCENTRATION_MICROGRAMS_PER_CUBIC_METER
 
@@ -220,6 +237,14 @@ class CarbonDioxide(SensorEntity):
         return self._device.quality["carbon_dioxide"]
 
     @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
+
+    @property
+    def unit_of_measurement(self):
+        return CONCENTRATION_PARTS_PER_MILLION
+
+    @property
     def device_class(self):
         return DEVICE_CLASS_CO2
 
@@ -268,6 +293,10 @@ class VolatileOrganicCompounds(SensorEntity):
     def state(self):
         """Return the VOC (Volatile Organic Compounds) level."""
         return self._device.quality["volatile_organic_compounds"]
+
+    @property
+    def state_class(self):
+        return STATE_CLASS_MEASUREMENT
 
     @property
     def icon(self):
