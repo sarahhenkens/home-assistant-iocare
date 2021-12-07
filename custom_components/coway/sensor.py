@@ -2,12 +2,11 @@
 
 import logging
 from homeassistant.helpers import entity_platform
-from homeassistant.components.sensor import SensorEntity, STATE_CLASS_MEASUREMENT
+from homeassistant.components.sensor import SensorEntity, STATE_CLASS_MEASUREMENT, SensorDeviceClass
 from .const import DOMAIN
 from homeassistant.const import (
     CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
     CONCENTRATION_PARTS_PER_MILLION,
-    DEVICE_CLASS_CO2,
 )
 _LOGGER = logging.getLogger(__name__)
 
@@ -245,8 +244,8 @@ class CarbonDioxide(SensorEntity):
         return CONCENTRATION_PARTS_PER_MILLION
 
     @property
-    def device_class(self):
-        return DEVICE_CLASS_CO2
+    def device_class(self) -> SensorDeviceClass:
+        return SensorDeviceClass.CO2
 
     @property
     def icon(self):
