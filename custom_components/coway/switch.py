@@ -66,3 +66,8 @@ class IOCareSwitch(SwitchEntity):
     def turn_off(self, **kwargs):
         """Turn the device off."""
         self._device.set_light(False)
+
+    def update(self):
+        """Update automation state."""
+        _LOGGER.info("Refreshing purifier switch state")
+        self._device.refresh()        
