@@ -215,7 +215,7 @@ class AirPurifier(FanEntity):
         return SUPPORT_SET_SPEED | SUPPORT_PRESET_MODE
 
     @property
-    def device_state_attributes(self) -> dict:
+    def extra_state_attributes(self) -> dict:
         """Return optional state attributes."""
         return {
             ATTR_NIGHT_MODE: self.night_mode,
